@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import productreview.model.ProductReview;
 import productreview.repository.ProductReviewRepository;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,9 +19,11 @@ public class ProductReviewRest {
     private ProductReviewRepository productReviewRepository;
 
     @GetMapping("/{productId}")
-    public ResponseEntity<List<ProductReview>> getAllReviewByProduct(
+    public ResponseEntity<Map<String, List<ProductReview>>> getAllReviewByProduct(
             @PathVariable("productId") long id) {
-        return new ResponseEntity<>(productReviewRepository.findByProductId(id), HttpStatus.OK);
+        Map reviewList = new HashMap();
+        reviewList.put("reviewlist", productReviewRepository.findByProductId(id));
+        return new ResponseEntity<Map<String, List<ProductReview>>>(reviewList, HttpStatus.OK);
     }
 
     @PostMapping("/product-review")
@@ -28,7 +31,21 @@ public class ProductReviewRest {
             @RequestParam Map<String,String> params) {
         System.out.println(params.keySet());
         System.out.println(params.values());
-        return new ResponseEntity<>("Review add successful", HttpStatus.OK);
+
+        ProductReview productReview = new ProductReview();
+        productReview.setProductId(Long.parseLong(params.get("productid")));
+        productReview.setStar(Integer.parseInt(params.get("star")));
+        productReview.setText(params.get("text"));
+        productReview.setUserId(Long.parseLong(params.get("userid")));
+
+
+        try {
+            productReviewRepository.save(productReview);
+            return new ResponseEntity<>("Review add successful", HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new ResponseEntity<>("Review add failed", HttpStatus.OK);
     }
 
 }

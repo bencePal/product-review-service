@@ -9,9 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 @Controller
 public class ProductReviewController {
 
-    @RequestMapping(value = "/{productId}", method = RequestMethod.GET)
-    public String test(Model model) {
+    @RequestMapping(value = "/", method = RequestMethod.GET)
+    public String testPage() {
         return "index";
-
     }
 }
