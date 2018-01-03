@@ -27,10 +27,8 @@ public class ProductReviewRest {
     }
 
     @PostMapping("/product-review")
-    public ResponseEntity<String> addNewReview(
+    public ResponseEntity<Map<String, String>> addNewReview(
             @RequestParam Map<String,String> params) {
-        System.out.println(params.keySet());
-        System.out.println(params.values());
 
         ProductReview productReview = new ProductReview();
         productReview.setProductId(Long.parseLong(params.get("productid")));
@@ -38,14 +36,19 @@ public class ProductReviewRest {
         productReview.setText(params.get("text"));
         productReview.setUserId(Long.parseLong(params.get("userid")));
 
+        Map message = new HashMap();
+
 
         try {
             productReviewRepository.save(productReview);
-            return new ResponseEntity<>("Review add successful", HttpStatus.OK);
+            message.put("success", "Review add successful");
+            return new ResponseEntity<Map<String, String>>(message, HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new ResponseEntity<>("Review add failed", HttpStatus.OK);
+        message.put("error", "Review add failed");
+        return new ResponseEntity<Map<String, String>>(message, HttpStatus.OK);
+
     }
 
 }
