@@ -38,7 +38,6 @@ public class ProductReviewRest {
 
         Map message = new HashMap();
 
-
         try {
             productReviewRepository.save(productReview);
             message.put("success", "Review add successful");
